@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ReplicaSet
+metadata:
+  #replicaset name and its labels
+  name: nginx-repliset
+  labels:
+    app: frontend
+    tier: web
+spec:
+  #Need to specify the count for the required number of Pods for traffic distribution
+  replicas: 3
+  selector:
+  #ReplicaSet use these labels for filter the specification to create number of Pods with desired number of replicas
+    matchLabels:
+      app: frontend
+      tier: web
+  #Pod template
+  template:
+    metadata:
+      name: nginx  #Optional
+      labels:
+        app: frontend
+        tier: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        #image: nginx:stable-perl
