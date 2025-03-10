@@ -17,7 +17,7 @@ spec:
   #Pod template
   template:
     metadata:
-      name: nginx  #Optional
+      name: nginx-repliset  #Optional
       labels:
         app: frontend
         tier: web
