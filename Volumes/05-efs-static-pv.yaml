@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-static
+spec:
+  capacity:
+    storage: 30Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""  #Empty string must be explicitly set otherwise default StorageClass will be set
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: <EFSvolume ID>
+  

@@ -1,0 +1,50 @@
+#PVC Creation
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-static
+spec:
+  storageClassName: ""  #Empty string must be explicitly set otherwise default StorageClass will be set
+  #PV Name
+  volumeName: ebs-static
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+#Configuring Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebs-static
+  labels:
+    purpose: "ebs-static-demo"
+spec:
+  nodeSelector:  # This is useful to create PVC in the same AZ where volume mapped otherwise there might be latency/container issues
+    topology.kubernetes.io/zone: us-east-1a
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name:  persistent-storage  #volumeMounts & volumes should be same, PVC mount happening via this parameter
+      mountPath: /usr/share/nginx/html
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ebs-static
+---
+#Configuration of LB
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-lb
+spec:
+  type: LoadBalancer
+  selector:  #labels used as selectors
+    purpose: "ebs-static-demo"
+  ports:
+  - protocol:  TCP
+    port: 80  #service port
+    targetPort: 80
+    nodePort: 30007
